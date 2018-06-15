@@ -7,7 +7,7 @@ import org.apache.hadoop.fs.FileStatus
 import org.apache.hadoop.mapreduce.Job
 import org.apache.spark.SparkException
 import org.apache.spark.internal.Logging
-import org.apache.spark.ml.linalg.{SQLDataTypes, Vector}
+import org.apache.spark.ml.linalg.SQLDataTypes
 import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.InternalRow
@@ -20,7 +20,6 @@ import org.apache.spark.sql.types.{DataTypes, StructType}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.util.SerializableConfiguration
 
-//case class Instance(id: Double, features: Seq[Vector])
 
 class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Logging {
 
@@ -30,10 +29,8 @@ class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Log
 
   private def verifySchema(dataSchema: StructType, arffOptions: ARFFOptions): Unit = {
 
-    dataSchema.foreach(x => println(x.metadata))
-
     if ((arffOptions.multiInstance && !dataSchema.apply("bag-id").dataType
-        .sameType(DataTypes.DoubleType)) ||
+      .sameType(DataTypes.DoubleType)) ||
       (arffOptions.xmlMultilabelFile.isEmpty && arffOptions.numOutputs == 1 &&
         !dataSchema.apply("label").dataType.sameType(DataTypes.DoubleType)) ||
       (arffOptions.xmlMultilabelFile.isDefined && !dataSchema.apply("multilabel").dataType
@@ -155,8 +152,6 @@ class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Log
                             filters: Seq[Filter],
                             options: Map[String, String],
                             hadoopConf: Configuration): (PartitionedFile) => Iterator[InternalRow] = {
-
-    //			 pf => Iterator(InternalRow(UTF8String.fromString("hello")))
 
     val arffOptions: ARFFOptions = new ARFFOptions(options)
 

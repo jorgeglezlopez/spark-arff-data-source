@@ -12,9 +12,9 @@ import org.apache.spark.ml.linalg.Vector
 import scala.collection.mutable.ArrayBuffer
 
 private[arff] class ARFFInstanceParser(
-    bagID: Option[StructField],
-    labels: StructField,
-    features: StructField)
+                                        bagID: Option[StructField],
+                                        labels: StructField,
+                                        features: StructField)
   extends Logging with Serializable {
 
   def this(labels: StructField, features: StructField) = {
@@ -38,8 +38,8 @@ private[arff] class ARFFInstanceParser(
 
     var size: Int = 0
     if (bagID.isDefined) size += 1
-    size += features.metadata.getMetadata("ml_attr").getLong("num_attrs").toInt
-    size += labels.metadata.getMetadata("ml_attr").getLong("num_attrs").toInt
+    size += featuresAttributeGroup.numAttributes.get
+    size += labelsAttributeGroup.numAttributes.get
 
     val p = Array.ofDim[ARFFAttributeParser](size)
 
@@ -102,6 +102,11 @@ private[arff] class ARFFInstanceParser(
         val pos = tuple(0).toInt
         val value = attributesParsers(pos).getValue(tuple(1))
 
+        if (value.equals("?")) {
+          throw new IOException(s"Missing values (?) are not supported. " +
+            s"Error parsing attribute $pos")
+        }
+
         if (pos > attributesParsers.length) {
           throw new IOException(s"The position of the sparse attribute is $pos but the number of attributes parsed from header is ${attributesParsers.length}.")
         }
@@ -150,17 +155,32 @@ private[arff] class ARFFInstanceParser(
 
       for (i <- 0 until numBags) {
         val pos = bagAttributeGroup.get.global_idx.get.apply(i)
-        bag(i) = attributesParsers(pos).getValue(unformatted(pos))
+        val value = unformatted(pos)
+        if (value.equals("?")) {
+          throw new IOException(s"Missing values (?) are not supported. " +
+            s"Error parsing attribute $pos")
+        }
+        bag(i) = attributesParsers(pos).getValue(value)
       }
 
       for (i <- 0 until numLabels) {
         val pos = labelsAttributeGroup.global_idx.get.apply(i)
-        labels(i) = attributesParsers(pos).getValue(unformatted(pos))
+        val value = unformatted(pos)
+        if (value.equals("?")) {
+          throw new IOException(s"Missing values (?) are not supported. " +
+            s"Error parsing attribute $pos")
+        }
+        labels(i) = attributesParsers(pos).getValue(value)
       }
 
       for (i <- 0 until numFeatures) {
         val pos = featuresAttributeGroup.global_idx.get.apply(i)
-        features(i) = attributesParsers(pos).getValue(unformatted(pos))
+        val value = unformatted(pos)
+        if (value.equals("?")) {
+          throw new IOException(s"Missing values (?) are not supported. " +
+            s"Error parsing attribute $pos")
+        }
+        features(i) = attributesParsers(pos).getValue(value)
       }
 
       if (numBags == 0 && numLabels == 1) {
