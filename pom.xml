@@ -88,13 +88,6 @@
             <!--<scope>provided</scope>-->
         </dependency>
         <!--tests-->
-        <!--<dependency>-->
-            <!--<groupId>junit</groupId>-->
-            <!--<artifactId>junit</artifactId>-->
-            <!--<version>4.11</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.11</artifactId>
@@ -137,6 +130,18 @@
                         </javacArgs>
                     </configuration>
                     <executions>
+                        <execution>
+                            <id>Scaladoc</id>
+                            <goals>
+                                <goal>doc</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                            <configuration>
+                                <args>
+                                    <arg>-no-link-warnings</arg>
+                                </args>
+                            </configuration>
+                        </execution>
                         <execution>
                             <id>scala-compile-first</id>
                             <phase>process-resources</phase>

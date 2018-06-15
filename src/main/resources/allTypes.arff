@@ -1,0 +1,14 @@
+
+@relation example
+
+@attribute att1 numeric
+@attribute att2 real
+@attribute att3 integer
+@attribute att4 { A, B, C, D}
+@attribute att5 string
+@attribute att6 date 'yyyy-MM-dd'
+@attribute class { yes, no}
+
+@data
+12,0.456,2,A,hello world,1980-01-01,yes
+7.43,0.981,5,C,good-bye world,1981-12-01,no

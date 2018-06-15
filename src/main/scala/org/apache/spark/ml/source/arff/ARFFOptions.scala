@@ -1,6 +1,5 @@
 package org.apache.spark.ml.source.arff
 
-import org.apache.commons.lang.time.FastDateFormat
 import org.apache.spark.internal.Logging
 
 private[arff] class ARFFOptions(@transient private val parameters: Map[String, String])
@@ -44,7 +43,6 @@ private[arff] class ARFFOptions(@transient private val parameters: Map[String, S
     }
   }
 
-  val missingValuesSymbol = getChar("missingValuesSymbol", '?')
   val comment = getChar("comment", '%')
 
   val schemaFile = parameters.get("schemaFile")
@@ -54,13 +52,5 @@ private[arff] class ARFFOptions(@transient private val parameters: Map[String, S
   val numOutputs = getInt("numOutputs", 1)
 
   val multiInstance = getBool("multiInstance", false)
-
-  // Uses `FastDateFormat` which can be direct replacement for `SimpleDateFormat` and thread-safe.
-  val dateFormat: FastDateFormat =
-    FastDateFormat.getInstance(parameters.getOrElse("dateFormat", "yyyy-MM-dd"))
-
-  val timestampFormat: FastDateFormat =
-    FastDateFormat.getInstance(
-      parameters.getOrElse("timestampFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"))
 
 }

@@ -208,7 +208,8 @@ object ARFFAttributeParser {
     // word1 is the name of the attr, word2 is the type of value and word3 is the date format
     var attribute(word1, word2, word3) = attributeDefinition
 
-    word1 = word1.replace("\"", "").replaceAll("'", "").replace("\\", "") // Sometimes the names are between quotes or with scaping characters
+    // Sometimes the names are between quotes or with scaping characters
+    word1 = word1.replace("\"", "").replaceAll("'", "").replace("\\", "")
 
     val parser = if (word2.toLowerCase() == "real") {
       RealParser(word1, arffAttributeCategory)
@@ -223,7 +224,11 @@ object ARFFAttributeParser {
       NominalParser(word1, arffAttributeCategory, word2.substring(1, word2.length() - 1).split(",").map(_.trim()))
     }
     else if (word2.toLowerCase() == "date") {
-      DateParser(word1, arffAttributeCategory, word3)
+      if (word3.isEmpty) {
+        DateParser(word1, arffAttributeCategory)
+      } else {
+        DateParser(word1, arffAttributeCategory, (word3.substring(1, word3.length() - 1)))
+      }
     }
     else if (word2.toLowerCase() == "string") {
       StringParser(word1, arffAttributeCategory)

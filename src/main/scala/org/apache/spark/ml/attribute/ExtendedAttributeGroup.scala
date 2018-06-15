@@ -1,5 +1,6 @@
 package org.apache.spark.ml.attribute
 
+import org.apache.spark.ml.attribute.Attribute.getFactory
 import org.apache.spark.ml.linalg.VectorUDT
 import org.apache.spark.sql.types.{Metadata, MetadataBuilder, StructField}
 
@@ -190,10 +191,37 @@ class ExtendedAttributeGroup private(val name: String,
 
   /** Converts to ML metadata with some existing metadata. */
   def toMetadata(existingMetadata: Metadata): Metadata = {
-    new MetadataBuilder()
-      .withMetadata(existingMetadata)
-      .putMetadata(AttributeKeys.ML_ATTR, toMetadataImpl)
-      .build()
+
+
+    if (numAttributes.get == 1) {
+
+      var bldr = new MetadataBuilder()
+
+      val meta = if (attributes.isDefined && attributes.get.size > 0) {
+        bldr.putLongArray(ExtendedAttributeKeys.GLOBAL_INDEX, global_idx.get.map(_.toLong))
+          .withMetadata(attributes.get.head.toMetadataImpl())
+          .build()
+      } else {
+        bldr.putLongArray(ExtendedAttributeKeys.GLOBAL_INDEX, global_idx.get.map(_.toLong))
+          .withMetadata(ext_attributes.get.head.toMetadataImpl)
+          .build()
+      }
+
+      bldr = new MetadataBuilder()
+
+      bldr
+        .withMetadata(existingMetadata)
+        .putMetadata(AttributeKeys.ML_ATTR, meta)
+        .build()
+
+    } else {
+      val bldr = new MetadataBuilder()
+
+      bldr.withMetadata(existingMetadata)
+        .putMetadata(AttributeKeys.ML_ATTR, toMetadataImpl)
+        .build()
+    }
+
   }
 
   /** Converts to ML metadata */
@@ -303,26 +331,61 @@ object ExtendedAttributeGroup {
       val optionExtAtt = if (ext_attributes.nonEmpty) Some(ext_attributes.toArray)
       else None
 
-      val globalIdx = if (metadata.contains(ExtendedAttributeKeys.GLOBAL_INDEX)) Some(metadata.getLongArray(ExtendedAttributeKeys.GLOBAL_INDEX).map(_.toInt))
-      else None
+      val globalIdx = if (metadata.contains(ExtendedAttributeKeys.GLOBAL_INDEX))
+        Some(metadata.getLongArray(ExtendedAttributeKeys.GLOBAL_INDEX).map(_.toInt))
+      else {
+        throw new IllegalArgumentException(s"Tag ${ExtendedAttributeKeys.GLOBAL_INDEX} and " +
+          s"is missing from metadata, impossible to create ExtendedAttributeGroup.")
+      }
 
       new ExtendedAttributeGroup(name, globalIdx, optionAtt, optionExtAtt)
-    } else if (metadata.contains(AttributeKeys.NUM_ATTRIBUTES)) {
-      new ExtendedAttributeGroup(name, metadata.getLong(AttributeKeys.NUM_ATTRIBUTES).toInt)
     } else {
-      throw new IllegalArgumentException(s"Tag ${AttributeKeys.ML_ATTR} and ${AttributeKeys.NUM_ATTRIBUTES} missing from metadata, imposible to create ExtendedAttributeGroup.")
-      null
+
+      import org.apache.spark.ml.attribute.AttributeKeys._
+      val attType = if (metadata.contains(TYPE)) {
+        metadata.getString(TYPE)
+      } else {
+        AttributeType.Numeric.name
+      }
+
+      val globalIdx = if (metadata.contains(ExtendedAttributeKeys.GLOBAL_INDEX))
+        Some(metadata.getLongArray(ExtendedAttributeKeys.GLOBAL_INDEX).map(_.toInt))
+      else {
+        throw new IllegalArgumentException(s"Tag ${ExtendedAttributeKeys.GLOBAL_INDEX} and " +
+          s"is missing from metadata, impossible to create ExtendedAttributeGroup.")
+      }
+
+      if (attType == ExtendedAttributeType.Date.name ||
+        attType == ExtendedAttributeType.String.name) {
+        val att = ExtendedAttribute.fromMetadata(metadata)
+        new ExtendedAttributeGroup(name, globalIdx, None, Some(Array(att)))
+      } else {
+        val att = Attribute.fromMetadata(metadata)
+        new ExtendedAttributeGroup(name, globalIdx, Some(Array(att)), None)
+      }
+
     }
+
+
+    //    else if (metadata.contains(AttributeKeys.NUM_ATTRIBUTES)) {
+    //      new ExtendedAttributeGroup(name, metadata.getLong(AttributeKeys.NUM_ATTRIBUTES).toInt)
+    //    } else {
+    //      throw new IllegalArgumentException(s"Tag ${AttributeKeys.ML_ATTR} and " +
+    //        s"${AttributeKeys.NUM_ATTRIBUTES} missing from metadata, impossible to " +
+    //        s"create ExtendedAttributeGroup.")
+    //      null
+    //    }
   }
 
   /** Creates an attribute group from a [[StructField]] instance. */
   def fromStructField(field: StructField): ExtendedAttributeGroup = {
-    //    require(field.dataType == new VectorUDT || field.dataType == ArrayType)
+
     if (field.metadata.contains(AttributeKeys.ML_ATTR)) {
       fromMetadata(field.metadata.getMetadata(AttributeKeys.ML_ATTR), field.name)
     } else {
-      //      new ExtendedAttributeGroup(field.name)
-      throw new IllegalArgumentException(s"Tag ${AttributeKeys.ML_ATTR} missing from metadata, imposible to create ExtendedAttributeGroup.")
+      throw new IllegalArgumentException(s"Tag ${AttributeKeys.ML_ATTR} missing from metadata, " +
+        s"impossible to create ExtendedAttributeGroup.")
     }
+
   }
 }
