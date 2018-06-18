@@ -1,0 +1,225 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>arff - arff-data-source 1.0 API - org.apache.spark.ml.source.arff</title>
+          <meta name="description" content="arff - arff - data - source 1.0 API - org.apache.spark.ml.source.arff" />
+          <meta name="keywords" content="arff arff data source 1.0 API org.apache.spark.ml.source.arff" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'org.apache.spark.ml.source.arff.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.ml">ml</a>.<a href="../package.html" class="extype" name="org.apache.spark.ml.source">source</a></p>
+        <h1>arff</h1><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.ml.source.arff.package" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">arff</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.apache.spark.ml.source.arff.ARFFAttributeCategory" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ARFFAttributeCategoryextendsAnyRef"></a>
+      <a id="ARFFAttributeCategory:ARFFAttributeCategory"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ARFFAttributeCategory.html"><span class="name">ARFFAttributeCategory</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.ml.source.arff.package@ARFFAttributeCategoryextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">:: DeveloperApi ::
+An enum-like type for arff attribute types Bag, Features, and Label
+</p>
+    </li><li name="org.apache.spark.ml.source.arff.ARFFDataSource" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ARFFDataSourceextendsAnyRef"></a>
+      <a id="ARFFDataSource:ARFFDataSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ARFFDataSource.html"><span class="name">ARFFDataSource</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.ml.source.arff.package@ARFFDataSourceextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"><code>ARFF</code> package implements Spark SQL data source API for loading ARFF data as DataFrame.</p><div class="fullcomment"><div class="comment cmt"><p><code>ARFF</code> package implements Spark SQL data source API for loading ARFF data as DataFrame.</p><p>The loaded DataFrame can have the following columns:
+* Bag:
+  * One column of type Double, if &quot;multiinstance&quot; is set to true.
+* Features:
+  * One column of type Vector.
+* Labels:
+  * One column of type Double if &quot;multilabelFile&quot; is not specified
+  * One column of type Vector (sparse) if the xml &quot;multilabelFile&quot; with the labels is
+    specified, or more than one output is indicated.</p><p>To use ARFF data source, you need to set &quot;org.apache.spark.ml.source.arff&quot; as the format
+in DataFrameReader and optionally specify options, for example:</p><pre> <span class="cmt">// Scala</span>
+ <span class="kw">val</span> df = spark.read.format(<span class="lit">"org.apache.spark.ml.source.arff"</span>)
+   .load(<span class="lit">"data/big_iris.arff"</span>)
+
+ <span class="cmt">// Java</span>
+ Dataset&lt;Row&gt; df = spark.read().format(<span class="lit">"org.apache.spark.ml.source.arff"</span>)
+   .load(<span class="lit">"data/big_iris.arff"</span>);
+
+<span class="cmt">// Python</span>
+ df = spark.read.format(<span class="lit">"org.apache.spark.ml.source.arff"</span>)
+   .load(<span class="lit">"data/big_iris.arff"</span>)</pre><p>ARFF data source supports the following options:</p><ul><li>&quot;comment&quot;: symbol to declare comments (? by default).</li><li>&quot;schemaFile&quot;: header file that declares the attributes, empty by deault because the header
+     is included at the begining of the main file.</li><li>&quot;xmlMultilabelFile&quot;: xml file that specifies the names of the labels</li><li>&quot;numOutputs&quot;: The number of outputs (labels) is set to 1 by default.</li><li>&quot;numFeatures&quot;: number of features.</li><li>&quot;multiInstance&quot;: Indicates if the file is multiinstance, and has a bag-id field.</li></ul><p>Note that this class is public for documentation purpose. Please don't use this class directly.
+Rather, use the data source API as illustrated above.
+</p></div></div>
+    </li><li name="org.apache.spark.ml.source.arff.DefaultSource" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DefaultSourceextendsTextBasedFileFormatwithDataSourceRegisterwithLogging"></a>
+      <a id="DefaultSource:DefaultSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="DefaultSource.html"><span class="name">DefaultSource</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.execution.datasources.TextBasedFileFormat">TextBasedFileFormat</span> with <span class="extype" name="org.apache.spark.sql.sources.DataSourceRegister">DataSourceRegister</span> with <span class="extype" name="org.apache.spark.internal.Logging">Logging</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.ml.source.arff.package@DefaultSourceextendsTextBasedFileFormatwithDataSourceRegisterwithLogging" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This class in the main entry point of the ARFF data source.</p><div class="fullcomment"><div class="comment cmt"><p>This class in the main entry point of the ARFF data source.
+This source will be called from the DataFrameReader using the registered
+name, in this case 'arff'.</p><p>After the class is invoked, the steps for the DataFrame creation are the following:</p><p>  * Infer schema: Infers the appropiate schema and stores the information from the
+                  header in the metadata.</p><p>  * Build reader: It creates a function that parses a file into an iterator of Rows.
+                  In order to parse each of the lines in the file, we create
+                  ARFFAttributeParsers from the metadata information in the schema.</p><p>This data source supports the following options:</p><p>  * (&quot;comment&quot;, &quot;value&quot;): Specifies the symbol used for comments, by default it uses %.</p><p>  * (&quot;schemaFile&quot;, &quot;path&quot;): Specifies a file with the ARFF header, by default it reads the
+                            header from the beginning of the first file.</p><p>  * (&quot;xmlMultilabelFile&quot;, &quot;path&quot;): Specifies the XML file that defines the names of the labels
+                                  in a multi-label paradigm. By default, it is empty.</p><p>  * (&quot;numOutputs&quot;, number): Specifies the number of attributes at the end of the header that are
+                            considered labels. This option is used for both multi-label and
+                            multi-target paradigms. By default, only the last attribute is
+                            considered to be an output.</p><p>  * (&quot;multiInstance&quot;, boolean): Indicates if the file defines a multi-instance paradigm. By
+                                default it is false.</p></div></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.apache.spark.ml.source.arff.ARFFAttributeCategory" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ARFFAttributeCategory"></a>
+      <a id="ARFFAttributeCategory:ARFFAttributeCategory"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ARFFAttributeCategory$.html"><span class="name">ARFFAttributeCategory</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.ml.source.arff.package@ARFFAttributeCategory" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">:: DeveloperApi ::
+</p>
+    </li><li name="org.apache.spark.ml.source.arff.ARFFAttributeParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ARFFAttributeParser"></a>
+      <a id="ARFFAttributeParser:ARFFAttributeParser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ARFFAttributeParser$.html"><span class="name">ARFFAttributeParser</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.ml.source.arff.package@ARFFAttributeParser" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

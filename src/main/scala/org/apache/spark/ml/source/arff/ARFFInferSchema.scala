@@ -12,6 +12,30 @@ import scala.collection.mutable.ArrayBuffer
 import scala.xml.XML
 
 
+/**
+  * This object infers an schema from the ARFF header.
+  * The schema will depend on the learning paradigm used in the file:
+  *
+  * // Traditional learning
+  * root
+  * |-- label: double (nullable = true)
+  * |-- features: vector (nullable = true)
+  *
+  * // Multi-output learning
+  * root
+  * |-- multilabel: vector (nullable = true)
+  * |-- features: vector (nullable = true)
+  *
+  * // Multi-instance learning
+  * root
+  * |-- bag-id: double (nullable = true)
+  * |-- label: double (nullable = true)
+  * |-- features: vector (nullable = true)
+  *
+  * Once the schema has been infered, the information parsed from the header
+  * will be stored in the metadata.
+  *
+  */
 private[arff] object ARFFInferSchema {
 
   def infer(sparkSession: SparkSession,

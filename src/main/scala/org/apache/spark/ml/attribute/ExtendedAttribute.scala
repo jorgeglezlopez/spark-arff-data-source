@@ -2,6 +2,11 @@ package org.apache.spark.ml.attribute
 
 import org.apache.spark.sql.types.{DoubleType, Metadata, MetadataBuilder, StructField}
 
+/**
+  * :: DeveloperApi ::
+  * Abstract class that represents an attribute type added in this data source.
+  * StringAttribute and DateAttribute extend this class.
+  */
 sealed abstract class ExtendedAttribute extends Serializable {
 
   name.foreach { n =>

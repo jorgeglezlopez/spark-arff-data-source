@@ -4,17 +4,25 @@ import java.io.IOException
 
 import org.apache.spark.internal.Logging
 import org.apache.spark.ml.attribute.ExtendedAttributeGroup
-import org.apache.spark.ml.linalg.Vectors
+import org.apache.spark.ml.linalg.{Vector, Vectors}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.StructField
-import org.apache.spark.ml.linalg.Vector
 
 import scala.collection.mutable.ArrayBuffer
 
-private[arff] class ARFFInstanceParser(
-                                        bagID: Option[StructField],
-                                        labels: StructField,
-                                        features: StructField)
+/**
+  * This class receives the StructField of the requiered field (columns) in the DataFrame
+  * Using these StructField it reconstructs the ARFFAttributeParser of each attribute
+  * and uses them in order to parse ARFF records (lines) and transform them into Rows.
+  *
+  * @param bagID Optional StructField from the bag-id field.
+  * @param features StructField extracted from the features field
+  * @param labels Structfield extracted from the labels field.
+  *
+  */
+private[arff] class ARFFInstanceParser(bagID: Option[StructField],
+                                       labels: StructField,
+                                       features: StructField)
   extends Logging with Serializable {
 
   def this(labels: StructField, features: StructField) = {
@@ -99,12 +107,13 @@ private[arff] class ARFFInstanceParser(
 
       for (i <- unformatted) {
         val tuple = i.trim().split(" ").map(_.trim)
-        val pos = tuple(0).toInt
-        val value = attributesParsers(pos).getValue(tuple(1))
 
-        if (value.equals("?")) {
-          throw new IOException(s"Missing values (?) are not supported. " +
-            s"Error parsing attribute $pos")
+        val pos = tuple(0).toInt
+        val value = if (tuple(1).equals("?")) {
+          log.warn(s"Missing value (?) found in attribute $pos")
+          Double.NaN
+        } else {
+          attributesParsers(pos).getValue(tuple(1))
         }
 
         if (pos > attributesParsers.length) {
@@ -157,30 +166,33 @@ private[arff] class ARFFInstanceParser(
         val pos = bagAttributeGroup.get.global_idx.get.apply(i)
         val value = unformatted(pos)
         if (value.equals("?")) {
-          throw new IOException(s"Missing values (?) are not supported. " +
-            s"Error parsing attribute $pos")
+          log.warn(s"Missing value (?) found in attribute $pos")
+          features(i) = Double.NaN
+        } else {
+          features(i) = attributesParsers(pos).getValue(value)
         }
-        bag(i) = attributesParsers(pos).getValue(value)
       }
 
       for (i <- 0 until numLabels) {
         val pos = labelsAttributeGroup.global_idx.get.apply(i)
         val value = unformatted(pos)
         if (value.equals("?")) {
-          throw new IOException(s"Missing values (?) are not supported. " +
-            s"Error parsing attribute $pos")
+          log.warn(s"Missing value (?) found in attribute $pos")
+          features(i) = Double.NaN
+        } else {
+          features(i) = attributesParsers(pos).getValue(value)
         }
-        labels(i) = attributesParsers(pos).getValue(value)
       }
 
       for (i <- 0 until numFeatures) {
         val pos = featuresAttributeGroup.global_idx.get.apply(i)
         val value = unformatted(pos)
         if (value.equals("?")) {
-          throw new IOException(s"Missing values (?) are not supported. " +
-            s"Error parsing attribute $pos")
+          log.warn(s"Missing value (?) found in attribute $pos")
+          features(i) = Double.NaN
+        } else {
+          features(i) = attributesParsers(pos).getValue(value)
         }
-        features(i) = attributesParsers(pos).getValue(value)
       }
 
       if (numBags == 0 && numLabels == 1) {
