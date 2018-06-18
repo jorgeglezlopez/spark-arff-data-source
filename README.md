@@ -321,7 +321,7 @@ On the other hand, in sparse instances the data with value 0 are not be explicit
     {1 X, 3 Y, 4 "class A"}
     {2 W, 4 "class B"}
 ```
-Although the original format supports missing values, indicated by (?), this data source does not allow this type of values. The reason behind it is that the features are of type *Vector* (which a collection of *Double*), and a primitive type such as Double cannot be set to *null*. 
+The ARFF format also supports missing values, indicated by (?). These type of values can be used both in dense and sparse instances. When they are parsey, they are transformed into *Double.NaN*, since a primitive type such as Double cannot be set to *null*. 
 
 # Data source
 
@@ -329,7 +329,9 @@ The data source API provides an extensible framework to read and write data to a
 
 The ARFF data source relies on the DataFrameReader to read the data and provides the processing of the information needed to create a DataFrame. The following class diagram presents the structure of the project:
 
-INSERT DIAGRAM HERE!
+<p align="center">
+  <img src="docs/img/diagram.jpg" width="600"/>
+</p>
 
 The packages colored in grey represent the original classes from the Spark source code. The green package represents the main classes. The blue package is the extension of the traditional attributes supported by Spark, which are also colored in grey.
 
