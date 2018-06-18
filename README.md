@@ -1,8 +1,8 @@
 # ARFF Data Source in Apache Spark
 
-The data source API at a high level is an API for turning data from various sources into Spark DataFrames and allows us to manage the structured data in any format. Spark has some built-in data sources such as Avro, Parquet, LibSVM, ORC, Parquet, JSON, JDBC, etc. Out of those data sources, LibSVM is the only data source specifically designed for Machine learning applications. However, this format is unable to specify information about the attributes, thus limiting its application to real-valued attributes and traditional classification/regression.
+The data source API at a high level is an API for turning data from various sources into Spark DataFrames and facilitates to manage the structured data in any format. Apache Spark has some built-in data sources such as Avro, Parquet, LibSVM, ORC, Parquet, JSON, JDBC, etc. Out of those data sources, LibSVM is the only data source specifically designed for machine learning applications. However, this format is unable to specify information about the attributes, thus limiting its application to real-valued attributes and traditional classification/regression paradigms.
 
-Here we present a native data source to support the  Attribute-Relation File Format ([ARFF](https://weka.wikispaces.com/ARFF%20%28stable%20version%29)) on Spark. This data source will infer additional information about the attributes, supporting different types of data (without using any [Transformer](https://spark.apache.org/docs/latest/ml-features.html#feature-transformers)) and relations which define new learning paradigms. The implementation extends seamlessly the Apache Spark source code, therefore the DataFrame is created using the same syntax as with the official supported formats. 
+Here we present a native data source to support the  Attribute-Relation File Format ([ARFF](https://weka.wikispaces.com/ARFF%20%28stable%20version%29)) on Apache Spark. This data source infers additional information about the attributes, supporting different types of data (without using any [Transformer](https://spark.apache.org/docs/latest/ml-features.html#feature-transformers)) and relations which define new learning paradigms, including multi-instance and multi-output learning. The implementation extends seamlessly the Apache Spark source code, therefore the DataFrame is created using the same syntax as with the official supported formats. 
 
 # Documentation
 
@@ -25,7 +25,7 @@ Here we present a native data source to support the  Attribute-Relation File For
 
 # Learning paradigms
 
-In **traditional learning**, one object is represented by a single instance and associated with only one label. The problem is called classification whenever the label consist on a natural number, or regression if it is a real-valued number. The following table represents an example of each case:
+In **traditional learning**, one object is represented by a single instance and associated with only one label. The problem is called classification whenever the output label is a nominal value (class), or regression if it's a real-valued number. The following table represents an example of each case:
 
 <table>
  <tr><th>Traditional learning</th></tr>
@@ -36,10 +36,10 @@ In **traditional learning**, one object is represented by a single instance and 
  
 |Instance|Label|
 |---|---|
-|x<sub>1</sub>|1|
-|x<sub>2</sub>|1|
-|x<sub>3</sub>|2|
-|x<sub>4</sub>|3|
+|x<sub>1</sub>|Class A|
+|x<sub>2</sub>|Class A|
+|x<sub>3</sub>|Class B|
+|x<sub>4</sub>|Class C|
 
 </td><td>
 
@@ -53,15 +53,15 @@ In **traditional learning**, one object is represented by a single instance and 
 </td></tr> </table>
 </td></tr> </table>
 
-Although the above formalization is prevailing and successful, there are many real-world problems which do not fit this framework well, where a real-world object may be associated with a number of instances and/or a number of labels simultaneously. Some examples are image classification, text categorization, ecological modeling, stock predictions, prediction of drug molecule activity level, etc.
+Although the above formalization is prevailing and successful, there are many real-world problems which do not fit this representation well, where a real-world object may be associated with a number of instances and/or labels simultaneously. Some examples are image classification, text categorization, ecological modeling, stock predictions, prediction of drug molecule activity level, etc.
 
-In **Multi-output learning**, one object is represented by a single instance which is associated to a set of labels simultaniously. Multi-output classification, also known as multi-label classification, the algorithm learns the set of labels present in each instance. These labels are often represented as a binary vector where each value can be *1* if the label is present and *0* otherwhise. Multi-output regression, also known as multi-target regression, learns the labels as a set of real-valued numbers. The following table presents a small example of each paradigm:
+In **multi-output learning**, one object is represented by a single instance which is associated to a set of labels simultaneously. In multi-output classification, also known as multi-label classification, the algorithm learns the set of labels present in each instance. These labels are often represented as a binary vector where each value can be *1* if the label is present and *0* otherwise. In multi-output regression, also known as multi-target regression, the algorithm learns the labels as a set of real-valued numbers. The following table presents a small example of each paradigm:
 
 <table>
  <tr><th>Multi-output learning</th></tr>
 <tr><td>
 <table>
- <tr><th>Multilabel Classification</th><th>Multitarget Regression</th></tr>
+ <tr><th>Multi-label Classification</th><th>Multi-target Regression</th></tr>
 <tr><td>
  
 |Instance|Labels|Binary Labels|
@@ -75,25 +75,25 @@ In **Multi-output learning**, one object is represented by a single instance whi
 
 |Instance|Labels|
 |---|---|
-|x<sub>1</sub>|{0.89,0.45,0.23}|
-|x<sub>2</sub>|{0.49,0.64,0.03}|
-|x<sub>3</sub>|{0.79,0.11,0.51}|
-|x<sub>4</sub>|{0.63,0.54,0.23}|
+|x<sub>1</sub>|{0.89, 0.45, 0.23}|
+|x<sub>2</sub>|{0.49, 0.64, 0.03}|
+|x<sub>3</sub>|{0.79, 0.11, 0.51}|
+|x<sub>4</sub>|{0.63, 0.54, 0.23}|
 
 </td></tr> </table>
 </td></tr> </table>
 
-In **Multi-instance learning**, each object (bag) consist of multiple instances which are associated with a single label. This learning paradimg is called Multi-instance classification whenever the label is a natural number, or regression if it is a real-valued number. The following table represents an example of each case:
+In **multi-instance learning**, each object (also known as bag) consists of a variable number of multiple instances which are associated with a single label. This learning paradigm  is called multi-instance classification whenever the label is either positive (1) or negative (0), or regression if it is a real-valued number. The following table represents an example of each case:
 
 
 <table>
  <tr><th>Multi-instance learning</th></tr>
 <tr><td>
 <table>
- <tr><th>Multiinstance Classification</th><th>Multiinstance Regression</th></tr>
+ <tr><th>Multi-instance Classification</th><th>Multi-instance Regression</th></tr>
 <tr><td>
  
-|Bag|Instance|Label|
+|Bag|Instances|Label|
 |---|---|---|
 |b<sub>1</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>18</sub>}|1|
 |b<sub>2</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>8</sub>}|0|
@@ -102,12 +102,12 @@ In **Multi-instance learning**, each object (bag) consist of multiple instances 
 
 </td><td>
  
-|Bag|Instance|Label|
+|Bag|Instances|Label|
 |---|---|---|
-|b<sub>1</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>18</sub>}|0.15|
-|b<sub>2</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>8</sub>}|0.45|
-|b<sub>3</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>12</sub>}|0.32|
-|b<sub>4</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>21</sub>}|0.77|
+|b<sub>1</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>11</sub>}|0.15|
+|b<sub>2</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>17</sub>}|0.45|
+|b<sub>3</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>7</sub>}|0.32|
+|b<sub>4</sub>|{x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>9</sub>}|0.77|
 
 
 </td></tr> </table>
@@ -117,13 +117,13 @@ In **Multi-instance learning**, each object (bag) consist of multiple instances 
 
 # Attribute-Relation File Format (ARFF)
 
-An ARFF (Attribute-Relation File Format) file is an ASCII text file that describes a list of instances sharing a set of attributes. The original format was first described in the data mining book written by Ian H. Witten and Eibe Frank. However, this format has been later modified in order to include String attributes, Date Attributes, and Sparse instances. 
+An ARFF (Attribute-Relation File Format) file is a text file that describes a relation of instances defined on a structured set of attributes. The original format was first described in the data mining book written by (Ian H. Witten and Eibe Frank)[https://www.elsevier.com/books/data-mining-practical-machine-learning-tools-and-techniques/witten/978-0-12-374856-0]. However, this format has been later modified in order to include string attributes, date attributes, and sparse instances. 
 
-ARFF files have two distinct sections. The first section is the **Header** information, which is followed the **Data** information.
+ARFF files have two distinct sections. The first section is the **header** information, which is followed the **data** information.
 
 ## Header
 
-The Header of the ARFF file contains the name of the relation, a list of the attributes (the columns in the data), and their types. All the statements are case-insensitive. Comments are lines starting with *%*. An example header on the standard *Iris* dataset looks like this: 
+The header of the ARFF file contains the name of the relation, a list of the attributes (the columns in the data), and their types. All the statements are case-insensitive. Comments are lines starting with *%*. An example header on the standard *Iris* dataset looks like this: 
 
 ```
    % 1. Title: Iris Plants Database
@@ -150,19 +150,20 @@ The main components of the Header and their detailed definitions are:
 ```
 where <relation-name> is a string. The string must be quoted if the name includes spaces. 
 
-**Attribute**: The declarations take the form of an orderd sequence of @attribute statements. Each attribute in the data set has its own @attribute statement which uniquely defines the name of that attribute and it's data type. The order the attributes are declared indicates the column position in the data section of the file. For example, if an attribute is the third one declared then Weka expects that all that attributes values will be found in the third comma delimited column.
- The format for the @attribute statement is:
+**Attribute**: The declarations take the form of an ordered sequence of @attribute statements. Each attribute in the data set has its own @attribute statement which uniquely defines the name of that attribute and its data type. The order the attributes are declared indicates the column position in the data section of the file. 
+
+The format for the @attribute statement is:
 ```
     @attribute <attribute-name> <datatype>
 ```
-where the <attribute-name> must start with an alphabetic character. If spaces are to be included in the name then the entire name must be quoted.
+where the *attribute-name* must start with an alphabetic character. If spaces are to be included in the name then the entire name must be quoted.
 The <datatype> can be: 
 
 * Numeric: Numeric attributes can be real or integer numbers. 
 
 * Integer: Is treated as numeric.
 
-* Real: Is treater as numeric.
+* Real: Is treated as numeric.
     
 * Nominal:  Nominal values are defined by providing an <nominal-specification> listing the possible values: {<nominal-name1>, <nominal-name2>, <nominal-name3>, ...}. For example, the class value of the Iris dataset can be defined as follows:
 ```
@@ -179,9 +180,9 @@ where <name> is the name for the attribute and <date-format> is an optional stri
 
 ### Definition of learning paradigms
 
-The header only describes the attributes of the data, not their relationship between them. This relationship between the input attributes (features) and the output attributes (labels) defines the learning paradigm. 
+The header only describes the attributes of the data, not their interrelationships. This relationship between the input attributes (features) and the output attributes (labels) defines the learning paradigm. 
 
-**Traditional learning** is the learning paradigm by default (unless otherwhise specified). This paradigm considers that the last attribute in the header is the label. For example, the following header of the *Iris* dataset would consider the nominal attribute *class* as the label, thus defining a traditional classification problem.
+**Traditional learning** is the learning paradigm by default (unless otherwise specified). This paradigm considers that the last attribute in the header is the label. For example, the following header of the *Iris* dataset would consider the nominal attribute *class* as the label, thus defining a traditional classification problem.
 
 ```
    @RELATION iris
@@ -192,7 +193,7 @@ The header only describes the attributes of the data, not their relationship bet
    @ATTRIBUTE petalwidth   NUMERIC
    @ATTRIBUTE class        {Iris-setosa,Iris-versicolor,Iris-virginica}
 ```
-On the other hand, the header of the *Servo* dataset would consider *rise* as a real-valued label and defines a tradditional regression problem. 
+On the other hand, the header of the *Servo* dataset would consider *rise* as a real-valued label and defines a traditional regression problem. 
 
 ```
     @RELATION 'servo'
@@ -248,7 +249,7 @@ On the other hand, the header of the *Servo* dataset would consider *rise* as a 
     <label name="orange"> </label>
 </labels>
 ```
-On the other hand, when the labels are a real-valued attributes, it defines a multi-target regression problem. For example, the dataset *Slump* considers *SLUMP_cm*, *FLOW_cm*, and *Compressive_Strength_Mpa* as the labels. 
+On the other hand, when the labels are real-valued attributes, it defines a multi-target regression problem. For example, the dataset *Slump* considers *SLUMP_cm*, *FLOW_cm*, and *Compressive_Strength_Mpa* as the labels. 
 
 ```
     @relation Concrete_Slump
@@ -281,7 +282,7 @@ On the other hand, when the labels are a real-valued attributes, it defines a mu
     @attribute class {0,1}
 ```
 
-On the other hand, when the labels are a real-valued attributes, it defines a multi-instance regression problem. Although the data source supports this format, there are not public available ARFF files for multi-instance regression. However, this is an example of the supported header format:
+On the other hand, when the labels are real-valued attributes, it defines a multi-instance regression problem. This is an example of the supported header format:
 
 ```
     @relation mutagenesis-reg-example
@@ -326,7 +327,7 @@ Although the original format supports missing values, indicated by (?), this dat
 
 The data source API provides an extensible framework to read and write data to and from a wide range of different data sources and various formats. Spark encapsulates the support to read data from external storage systems like files, Hive tables and JDBC databases through [**DataFrameReader**](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameReader) interface. The built-in data sources use this interface to receive the data, which is then processed following the specified format and transform it into a DataFrame.
 
-The ARFF data source relies on the DataFrameReader to read the data, and provides the processing of the information readed to create a DataFrame. The following class diagram presents the structure of the project:
+The ARFF data source relies on the DataFrameReader to read the data and provides the processing of the information needed to create a DataFrame. The following class diagram presents the structure of the project:
 
 INSERT DIAGRAM HERE!
 
@@ -378,7 +379,7 @@ The *inferSchema* method creates the corresponding schema from the file and the 
     throw new UnsupportedOperationException(s"buildReader is not supported for $this")
   }
 ```
-After the schema has been infered, the *buildReader* method creates a function that transforms a *PartitionedFile* into a *Iterator[InternalRow]*. This method receives among its parameters the options which will be casted to **ARFFOptions** and the previously infered schema. Using this information it will parse each of the lines of the data section and transform it into Rows. 
+After the schema has been infered, the *buildReader* method creates a function that transforms a *PartitionedFile* into a *Iterator[InternalRow]*. This method receives among its parameters the options which will be casted to **ARFFOptions** and the previously infered schema. Using this information, it will parse each of the lines of the data section and transform them into Rows. 
 
 ## ARFFOptions
 
@@ -397,15 +398,15 @@ The options supported by the data source are the following:
 
 * (*"schemaFile"*, *"path"*): Specifies a file with the ARFF header, by default it reads the header from the beginning of the first file. 
 
-* (*"xmlMultilabelFile"*, *"path"*): Specifies the XML file that defines the names of the labels in a multi-label paradigm. By default it is empty.
+* (*"xmlMultilabelFile"*, *"path"*): Specifies the XML file that defines the names of the labels in a multi-label paradigm. By default, it is empty.
 
-* (*"numOutputs"*, *number*): Specifies the number of attributes at the end of the header that are considered labels. This option is used for both multi-label and multi-target paradigms. By default only the last attribute is considered to be an output.
+* (*"numOutputs"*, *number*): Specifies the number of attributes at the end of the header that are considered labels. This option is used for both multi-label and multi-target paradigms. By default, only the last attribute is considered to be an output.
 
 * (*"multiInstance"*, *boolean*): Indicates if the file defines a multi-instance paradigm. By default it is false. 
 
 ## ARFFInferSchema
 
-This class receives the ARFF header and the options set by the user, which uses to create a schema with the required attributes. Additionally this schema storages the information of all the attibutes in the metadata. In order to extract the information of each attribute we use the static method *attributeDefinition2Parser* from **ARFFAttributeParser** which uses the following regular expression:
+This class receives the ARFF header and the options set by the user, which uses to create a schema with the required attributes. Additionally, this schema storages the information of all the attributes in the metadata. In order to extract the information of each attribute we use the static method *attributeDefinition2Parser* from **ARFFAttributeParser** which uses the following regular expression:
 
 ```scala
   private val literal = "'?(.*?)'?"
@@ -416,7 +417,7 @@ This class receives the ARFF header and the options set by the user, which uses 
   
   val attribute(word1, word2, word3) = attributeDefinition
 ```
-This regular expression storages in the variable *word1* the name of the attribute, in *word2* the type of the attribute, and in *word3* the data format in case it is present. The **ARFFAttributeParser** have a factory constructor which can create different parsers that depends on the type of attribute. The specific classes are:
+This regular expression store in the variable *word1* the name of the attribute, in *word2* the type of the attribute, and in *word3* the data format in case it is present. The **ARFFAttributeParser** has a factory constructor which can create different parsers that depend on the type of attribute. The specific classes are:
 
 * NumericParser
 * IntegerParser
@@ -425,7 +426,7 @@ This regular expression storages in the variable *word1* the name of the attribu
 * StringParser
 * DateParser
 
-Each of this classes is extended from **ARFFAttributeParser**, and transforms from raw records (string) to values (Double) accordingly to its type. Additionally, each parser is set to indicate which kind of field belongs to (labels, features or bag-id).
+Each of this classes is extended from **ARFFAttributeParser**, and transforms from raw records (string) to values (Double) according to its type. Additionally, each parser is set to indicate which kind of field belongs to (labels, features or bag-id).
 
 Once all the attributes are processed and transformed into parsers, the schema of the DataFrame is created according to the specific learning paradigm. 
 
@@ -447,12 +448,12 @@ Once all the attributes are processed and transformed into parsers, the schema o
     |-- features: vector (nullable = true)
 ```
 
-Each field represents a column in the DataFrame, with its own name, type and metadata. In order to store the information of the attributes of each field in the metadata, it uses the **ExtendedAttributeGroup** which is strongly based on the original **AttributeGroup** from the Spark source code. This class allows to create metadata from the information stored in a sequence of Attribute classes, and viceversa. 
+Each field represents a column in the DataFrame, with its own name, type and metadata. In order to store the information of the attributes of each field in the metadata, it uses the **ExtendedAttributeGroup** which is strongly based on the original **AttributeGroup** from the Spark source code. This class allows to create metadata from the information stored in a sequence of Attribute classes, and vice-versa. 
 
 ## ExtendedAttributeGroup
 The **ExtendedAttributeGroup** is based on the [**AttributeGroup**](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.ml.attribute.AttributeGroup), but has been modified in order to incorporate the **StringAttribute** and the **DateAttribute**. The **ExtendedAttributeGroup** has a sequence of **Attributes** (NumericAttribute, NominalAttribute, and BinaryAttribute) and a sequence of **ExtendedAttributes** (StringAttribute, and DateAttribute). Internally it keeps a map of indices which transforms indices that address the total collection to local indices in each of the sequences. 
 
-The **ExtendedAttributeGroup** class allows to transform the group to metadata in order to store it in the corresponding field in the schema, and to parse the metadata of a field back to a **ExtendedAttributeGroup**. Using this procedure we reconstruct the parsers from the **ARFFInferSchema** in the **ARFFInstanceParser** withouth having to parse the header again. 
+The **ExtendedAttributeGroup** class allows to transform the group to metadata in order to store it in the corresponding field in the schema, and to parse the metadata of a field back to a **ExtendedAttributeGroup**. Using this procedure, we reconstruct the parsers from the **ARFFInferSchema** in the **ARFFInstanceParser** without having to parse the header again. 
 
 For example, the following header which has all the different types of attributes present:
 
@@ -491,13 +492,13 @@ The **ExtendedAttributeGroup** class can be constructed by specifying manually t
 
 ## ARFFInstanceParser
 
-The **ARFFInstanceParser** class receives among its parameter the schema, and returns a function of the type *(PartitionedFile) => Iterator[InternalRow]*. This function will parse a a file (or partitions of a file) into a iterator of Row, which will define the content of the final DataFrame. 
+The **ARFFInstanceParser** class receives among its parameter the schema, and returns a function of the type *(PartitionedFile) => Iterator[InternalRow]*. This function will parse a a file (or partitions of a file) into an iterator of Row, which will define the content of the final DataFrame. 
 
-This class first constructs a **ExtendedAttributeGroup** for each of the fields in the schema using the metadata. This means one for the  features, one for the label/s and one for the bag identifier (if present). After each **ExtendedAttributeGroup** has been created, this class has the *global_idx* from each of the attributes in all the fields. Combining these indices with the information from the attributes, this class can construct a collection of **ARFFAttributeParser** for all the attributes with the same order as the attributes in the header. 
+This class first constructs a **ExtendedAttributeGroup** for each of the fields in the schema using the metadata. This means one for the features, one for the label/s and one for the bag identifier (if present). After each **ExtendedAttributeGroup** has been created, this class has the *global_idx* from each of the attributes in all the fields. Combining these indices with the information from the attributes, this class can construct a collection of **ARFFAttributeParser** for all the attributes with the same order as the attributes in the header. 
 
-Once the all the parsers have been contructed, the **ARFFInstanceParser** builds a buffer of values for each existing field in the DataFrame. Then it looks at the first character for each of the instances to discern if they are *dense* or *sparse*. The *dense* instances are split by commas and each of tokens is processed by its corresponding parser, the parsed value is then added to the buffer of the field indicated by the parser. The *sparse* instances are split by commas and then each token is split by a space, creating tuples with positions and values. Each of the values is parsed by the parser indicated by the position, and stored in the corresponding buffer. 
+Once all the parsers have been constructed, the **ARFFInstanceParser** builds a buffer of values for each existing field in the DataFrame. Then it looks at the first character for each of the instances to discern if they are *dense* or *sparse*. The *dense* instances are split by commas and each of tokens is processed by its corresponding parser, the parsed value is then added to the buffer of the field indicated by the parser. The *sparse* instances are split by commas and then each token is split by a space, creating tuples with indices and values. Each of the values is parsed by the parser indicated by the position and stored in the corresponding buffer. 
 
-At the end, when all the values have been parsed and stored in the buffers, a **Row** is created with the contents of the buffers of each field. It its important to create the fields in the Row in the same order as they were defined in the schema. 
+At the end, when all the values have been parsed and stored in the buffers, a **Row** is created with the contents of the buffers of each field. It is important to create the fields in the Row in the same order as they were defined in the schema. 
 
 # Datasets links
 Here we provide a wide range of links where datasets of different paradigms can be found:
@@ -510,34 +511,53 @@ Here we provide a wide range of links where datasets of different paradigms can 
 
 # API
 
-The ARFF Data source interacts with Apache Spark by using the *DataFrameReader*, which is the interface used by all the sources that create a DataFrame. Since our data source is called by the main Spark framework, it supports the use of Scala, Java, and Python languages, however for simplicify we are going to show some examples in Scala as is the main language:
+The ARFF Data source interacts with Apache Spark by using the *DataFrameReader*, which is the interface used by all the sources that create a DataFrame. Since our data source is called by the main Spark framework, it supports the use of Scala, Java, and Python languages, for simplicity we are going to show some examples in Scala as is the main language:
 
 ```scala
-    val traditional_df = sparkSession
+    val traditional_classification_df = sparkSession
       .read
       .format("org.apache.spark.ml.source.arff")
-      .load(traditionalDataset)
+      .load("weather.arff")
+      
+    val traditional_regression_df = sparkSession
+      .read
+      .format("org.apache.spark.ml.source.arff")
+      .load("servo.arff")
       
     val multilabel_df = sparkSession
       .read
       .format("org.apache.spark.ml.source.arff")
-      .option("xmlMultilabelFile", multilabelXML)
-      .load(multilabelDataset)
+      .option("xmlMultilabelFile", "emotions.xml")
+      .load("emotions.arff")
       
     val multitarget_df = sparkSession
       .read
       .format("org.apache.spark.ml.source.arff")
       .option("numOutputs", 6)
-      .load(multitargetDataset)
+      .load("andro.arff")
 
     val multiInstance_df = sparkSession
       .read
       .format("org.apache.spark.ml.source.arff")
       .option("multiInstance", value = true)
-      .load(multiInstanceDataset)
+      .load("musk1.arff")
 ```
 
 # Examples
 
-The `src/org/apache/spark/examples` package provides some examples about each of the different paradigms. In each example, the main characteristics of the data related to the paradigm are computed. Additionally, it shows how to extract information from the metadata in the schema generated by the data source. 
+The `src/org/apache/spark/examples` package provides some examples about each of the different paradigms. In each example, a different dataset is used to present a series of operations performed using a data/schema specific of each paradigm. The provided examples are:
+
+* [TraditionalClassificationExample](https://github.com/jorgeglezlopez/spark-arff-data-source/blob/master/src/main/scala/org/apache/spark/examples/TraditionalClassificationExample.scala): This example loads the *weather.arff* dataset, showing the schema, metadata, and first 20 instances of the DataFrame. Then it shows how information from the metadata can be extracted, in order to discover the number of categories of the nominal attributes in the features. Also, the number of instances for each class is shown. Finally, it presents the main characteristics of the dataset: number of instances, features and classes. 
+
+* [TraditionalRegressionExample](https://github.com/jorgeglezlopez/spark-arff-data-source/blob/master/src/main/scala/org/apache/spark/examples/TraditionalRegressionExample.scala): This example loads the *servo.arff* dataset, showing the schema, metadata, and first 20 instances of the DataFrame. Then it shows how information from the metadata can be extracted, in order to discover the number of categories of the nominal attributes in the features. Also, it computes statistics about the class showing the maximum, average, kurtosis, and skewness values. Finally, it presents the main characteristics of the dataset: number of instances, features and classes. 
+
+* [MultilabelExample](https://github.com/jorgeglezlopez/spark-arff-data-source/blob/master/src/main/scala/org/apache/spark/examples/MultilabelExample.scala): This example loads the *emotions.arff* dataset, with the *emotions.xml* file which defines the labels, showing the schema, metadata, and first 20 instances of the DataFrame. Then it computes some statistics about the labels, such as counting the unique subsets or the label frequency (using a User Defined Aggregate Function). Finally, it presents the main characteristics of the dataset: number of instances, features, labels, cardinality, density, and unique number of subsets. 
+
+* [MultitargetExample](https://github.com/jorgeglezlopez/spark-arff-data-source/blob/master/src/main/scala/org/apache/spark/examples/MultitargetExample.scala): This example loads the *andro.arff* dataset showing the schema, metadata, and first 20 instances of the DataFrame. Then it computes the correlation matrix of the labels, which indicate which labels are correlated to each other. Finally, it presents the main characteristics of the dataset: number of instances, features, and labels.
+
+* [MultiinstanceExample](https://github.com/jorgeglezlopez/spark-arff-data-source/blob/master/src/main/scala/org/apache/spark/examples/MultiinstanceExample.scala): This example loads the *musk1.arff* dataset showing the schema, metadata, and first 20 instances of the DataFrame. Then it computes some statistics about the bags, such as minimum, maximum and average number of instances in the bags. Finally, it presents the main characteristics of the dataset: number of bags, instances, features, and labels.
+
+
+
+
 

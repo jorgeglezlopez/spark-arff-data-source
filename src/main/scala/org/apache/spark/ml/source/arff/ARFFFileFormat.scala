@@ -20,7 +20,40 @@ import org.apache.spark.sql.types.{DataTypes, StructType}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.util.SerializableConfiguration
 
-
+/**
+  * This class in the main entry point of the ARFF data source.
+  * This source will be called from the DataFrameReader using the registered
+  * name, in this case 'arff'.
+  *
+  * After the class is invoked, the steps for the DataFrame creation are the following:
+  *
+  *   * Infer schema: Infers the appropiate schema and stores the information from the
+  *                   header in the metadata.
+  *
+  *   * Build reader: It creates a function that parses a file into an iterator of Rows.
+  *                   In order to parse each of the lines in the file, we create
+  *                   ARFFAttributeParsers from the metadata information in the schema.
+  *
+  * This data source supports the following options:
+  *
+  *   * ("comment", "value"): Specifies the symbol used for comments, by default it uses %.
+  *
+  *   * ("schemaFile", "path"): Specifies a file with the ARFF header, by default it reads the
+  *                             header from the beginning of the first file.
+  *
+  *   * ("xmlMultilabelFile", "path"): Specifies the XML file that defines the names of the labels
+  *                                   in a multi-label paradigm. By default, it is empty.
+  *
+  *   * ("numOutputs", number): Specifies the number of attributes at the end of the header that are
+  *                             considered labels. This option is used for both multi-label and
+  *                             multi-target paradigms. By default, only the last attribute is
+  *                             considered to be an output.
+  *
+  *   * ("multiInstance", boolean): Indicates if the file defines a multi-instance paradigm. By
+  *                                 default it is false.
+  *
+  *
+  */
 class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Logging {
 
   override def shortName(): String = "arff"
@@ -74,7 +107,9 @@ class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Log
           } else if (dataFiles.isEmpty) {
             throw new IOException("No input path specified for arff data")
           } else {
-            log.warn(s"Multiple schema infering is not supported. From all the input files the schema will be infered from ${dataFiles.head.getPath.toString}")
+            log.warn(s"Multiple schema infering is not supported. " +
+              s"From all the input files the schema will be inferred " +
+              s"from ${dataFiles.head.getPath.toString}")
             dataFiles.head.getPath.toString
             //      				dataFiles.head.getPath.toUri.toString
           }
