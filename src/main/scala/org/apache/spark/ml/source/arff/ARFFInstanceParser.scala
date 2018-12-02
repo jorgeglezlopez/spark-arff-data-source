@@ -178,9 +178,9 @@ private[arff] class ARFFInstanceParser(bagID: Option[StructField],
         val value = unformatted(pos)
         if (value.equals("?")) {
           log.warn(s"Missing value (?) found in attribute $pos")
-          features(i) = Double.NaN
+          labels(i) = Double.NaN
         } else {
-          features(i) = attributesParsers(pos).getValue(value)
+          labels(i) = attributesParsers(pos).getValue(value)
         }
       }
 
