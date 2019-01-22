@@ -5,9 +5,6 @@ import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.ml.util.MetadataUtils
 import org.apache.spark.sql.SparkSession
 
-/**
-  *
-  */
 object MultiinstanceExample {
 
   def main(args: Array[String]): Unit = {
