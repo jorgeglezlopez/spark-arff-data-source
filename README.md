@@ -402,8 +402,7 @@ The options supported by the data source are the following:
 
 * (*"xmlMultilabelFile"*, *"path"*): Specifies the XML file that defines the names of the labels in a multi-label paradigm. By default, it is empty.
 
-* (*"numOutputs"*, *number*): Specifies the number of attributes at the end of the header that are considered labels. This option is used for both multi-label and multi-target paradigms. By default, only the last attribute is considered to be an output.
-
+* (*"numOutputs"*, *number*): Specifies the number of attributes at the end of the header that are considered outputs. However, if *"xmlMultilabelFile"* is defined there is no need to specify a number of outputs . By default, only the last attribute is an output. 
 * (*"multiInstance"*, *boolean*): Indicates if the file defines a multi-instance paradigm. By default it is false. 
 
 ## ARFFInferSchema
