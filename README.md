@@ -558,7 +558,6 @@ The `src/org/apache/spark/examples` package provides some examples about each of
 
 * [MultiinstanceExample](https://github.com/jorgeglezlopez/spark-arff-data-source/blob/master/src/main/scala/org/apache/spark/examples/MultiinstanceExample.scala): This example loads the *musk1.arff* dataset showing the schema, metadata, and first 20 instances of the DataFrame. Then it computes some statistics about the bags, such as minimum, maximum and average number of instances in the bags. Finally, it presents the main characteristics of the dataset: number of bags, instances, features, and labels.
 
+# Citation
 
-
-
-
+> J. Gonzalez-Lopez, S. Ventura, and A. Cano. ARFF data source library for distributed single/multiple instance, single/multiple output learning on Apache Spark. In International Conference on Computational Science, 173-179, 2019.
