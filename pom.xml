@@ -22,9 +22,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <scala.version>2.11.12</scala.version>
-        <scala.binary.version>2.11</scala.binary.version>
-        <spark.version>2.3.0</spark.version>
+        <scala.version>2.12.15</scala.version>
+        <scala.binary.version>2.12</scala.binary.version>
+        <spark.version>2.4.8</spark.version>
     </properties>
 
     <licenses>
@@ -33,31 +33,6 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-
-    <!-- Maven profiles allow you to support both Scala 2.11 and Scala 2.10,
-        the dependencies could be specified in the profiles but they are the same
-        they were declared outside profiles -->
-    <!-- <profiles> -->
-    <!-- <profile> -->
-    <!-- <id>scala-2.11</id> -->
-    <!-- <activation> -->
-    <!-- <activeByDefault>true</activeByDefault> -->
-    <!-- </activation> -->
-    <!-- <properties> -->
-    <!-- <scala.version>2.11.6</scala.version> -->
-    <!-- <scala.test.version>2.2.1</scala.test.version> -->
-    <!-- <scala.binary.version>2.11</scala.binary.version> -->
-    <!-- </properties> -->
-    <!-- </profile> -->
-    <!-- <profile> -->
-    <!-- <id>scala-2.10</id> -->
-    <!-- <properties> -->
-    <!-- <scalaVersion>2.10.6</scalaVersion> -->
-    <!-- <scalaBinaryVersion>2.10</scalaBinaryVersion> -->
-    <!-- <scala.test.version>2.2.1</scala.test.version> -->
-    <!-- </properties> -->
-    <!-- </profile> -->
-    <!-- </profiles> -->
 
     <dependencies>
         <!-- Scala lang -->
@@ -90,8 +65,8 @@
         <!--tests-->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
-            <version>3.0.5</version>
+            <artifactId>scalatest_2.12</artifactId>
+            <version>3.2.10</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -101,13 +76,6 @@
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
             <plugins>
-                <!-- Used for tests -->
-                <!-- <plugin> -->
-                <!-- <groupId>org.apache.maven.plugins</groupId> -->
-                <!-- <artifactId>maven-surefire-plugin</artifactId> -->
-                <!-- <version>2.14.1</version> -->
-                <!-- </plugin> -->
-
                 <!-- Scala compiler -->
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
@@ -178,66 +146,7 @@
                         </execution>
                     </executions>
                 </plugin>
-
-                <!-- To create jar with dependencies -->
-                <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                <!--<version>2.4</version>-->
-                <!--<configuration>-->
-                <!--<descriptorRefs>-->
-                <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
-                <!--</descriptorRefs>-->
-                <!--<archive>-->
-                <!--<manifest>-->
-                <!--<mainClass>${app.main.class}</mainClass>-->
-                <!--</manifest>-->
-                <!--</archive>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                <!--<execution>-->
-                <!--<phase>package</phase>-->
-                <!--<goals>-->
-                <!--<goal>single</goal>-->
-                <!--</goals>-->
-                <!--</execution>-->
-                <!--</executions>-->
-                <!--</plugin>-->
             </plugins>
         </pluginManagement>
-
-        <plugins>
-            <!-- <plugin> -->
-            <!-- <artifactId>maven-enforcer-plugin</artifactId> -->
-            <!-- <executions> -->
-            <!-- <execution> -->
-            <!-- <id>enforce-java-version</id> -->
-            <!-- <goals> -->
-            <!-- <goal>enforce</goal> -->
-            <!-- </goals> -->
-            <!-- <configuration> -->
-            <!-- <rules> -->
-            <!-- <requireJavaVersion> -->
-            <!-- <version>[${java.version},)</version> -->
-            <!-- </requireJavaVersion> -->
-            <!-- <DependencyConvergence /> -->
-            <!-- </rules> -->
-            <!-- </configuration> -->
-            <!-- </execution> -->
-            <!-- </executions> -->
-            <!-- </plugin> -->
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-assembly-plugin</artifactId>-->
-            <!--</plugin>-->
-        </plugins>
     </build>
 </project>
