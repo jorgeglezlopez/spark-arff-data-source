@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 object MultilabelExample {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
 
     val multilabelDataset = getClass
       .getClassLoader
@@ -27,7 +27,7 @@ object MultilabelExample {
 
     val log = Logger.getLogger(getClass.getName)
 
-    val sparkSession = SparkSession.builder
+    val sparkSession = SparkSession.builder()
       .appName("MultilabelExample")
       .master("local[*]")
       .getOrCreate()

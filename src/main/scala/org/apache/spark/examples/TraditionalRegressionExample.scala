@@ -7,7 +7,7 @@ import org.apache.spark.sql.SparkSession
 
 object TraditionalRegressionExample {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
 
     val traditionalClassificationDataset = getClass
       .getClassLoader
@@ -20,7 +20,7 @@ object TraditionalRegressionExample {
 
     val log = Logger.getLogger(getClass.getName)
 
-    val sparkSession = SparkSession.builder
+    val sparkSession = SparkSession.builder()
       .appName("TraditionalRegressionExample")
       .master("local[*]")
       .getOrCreate()

@@ -1,7 +1,6 @@
 package org.apache.spark.ml.source.arff
 
 import java.io.IOException
-
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileStatus
 import org.apache.hadoop.mapreduce.Job
@@ -9,9 +8,9 @@ import org.apache.spark.SparkException
 import org.apache.spark.internal.Logging
 import org.apache.spark.ml.linalg.SQLDataTypes
 import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.encoders.RowEncoder
+import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.catalyst.expressions.codegen.GenerateUnsafeProjection
 import org.apache.spark.sql.catalyst.expressions.{AttributeReference, UnsafeProjection}
 import org.apache.spark.sql.execution.datasources.{HadoopFileLinesReader, OutputWriterFactory, PartitionedFile, TextBasedFileFormat}
@@ -210,7 +209,7 @@ class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Log
       val instanceParser = new ARFFInstanceParser(bagStructField, labelStructField,
         featuresStructField)
 
-      val converter = RowEncoder(dataSchema)
+      val converter: ExpressionEncoder[Row] = RowEncoder(dataSchema)
 
       val fullOutput = dataSchema.map { f =>
         AttributeReference(f.name, f.dataType, f.nullable, f.metadata)()
@@ -229,7 +228,8 @@ class DefaultSource extends TextBasedFileFormat with DataSourceRegister with Log
           line.startsWith(arffOptions.comment.toString) ||
           line.equals("{}"))
         .map({ line =>
-          requiredColumns(converter.toRow(instanceParser.parseArffRecord(line)))
+          import sparkSession.implicits._
+          requiredColumns(converter.createSerializer().apply(instanceParser.parseArffRecord(line)))
         })
     }
   }

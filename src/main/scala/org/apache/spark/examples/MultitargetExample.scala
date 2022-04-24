@@ -6,7 +6,7 @@ import org.apache.spark.sql.{Row, SparkSession}
 
 object MultitargetExample {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
 
     val multitargetDataset = getClass
       .getClassLoader
@@ -19,7 +19,7 @@ object MultitargetExample {
 
     val log = Logger.getLogger(getClass.getName)
 
-    val sparkSession = SparkSession.builder
+    val sparkSession = SparkSession.builder()
       .appName("MultitargetExample")
       .master("local[*]")
       .getOrCreate()
@@ -105,7 +105,7 @@ object MultitargetExample {
 
     //      import org.apache.spark.sql.functions._
     import org.apache.spark.ml.stat.Correlation
-    val Row(coeff: Matrix) = Correlation.corr(dataset, "multilabel").head
+    val Row(coeff: Matrix) = Correlation.corr(dataset, "multilabel").head()
     val strCoeff = coeff.toString(600, 600)
     println(s"Pearson correlation matrix of labels:\n $strCoeff \n")
     //    Pearson correlation matrix of labels:

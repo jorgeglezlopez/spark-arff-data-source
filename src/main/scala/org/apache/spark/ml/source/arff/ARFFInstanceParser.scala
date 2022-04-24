@@ -135,16 +135,16 @@ private[arff] class ARFFInstanceParser(bagID: Option[StructField],
       }
 
       if (numBags == 0 && numLabels == 1) {
-        output = Row(labels(0)._2, Vectors.sparse(numFeatures, features))
+        output = Row(labels(0)._2, Vectors.sparse(numFeatures, features.toSeq))
       }
       else if (numBags == 0 && numLabels > 1) {
-        output = Row(Vectors.sparse(numLabels, labels), Vectors.sparse(numFeatures, features))
+        output = Row(Vectors.sparse(numLabels, labels.toSeq), Vectors.sparse(numFeatures, features.toSeq))
       }
       else if (numBags == 1 && numLabels == 1) {
-        output = Row(bag(0)._2, labels(0)._2, Vectors.sparse(numFeatures, features))
+        output = Row(bag(0)._2, labels(0)._2, Vectors.sparse(numFeatures, features.toSeq))
       }
       else if (numBags == 1 && numLabels > 1) {
-        output = Row(bag(0)._2, Vectors.sparse(numLabels, labels), Vectors.sparse(numFeatures, features))
+        output = Row(bag(0)._2, Vectors.sparse(numLabels, labels.toSeq), Vectors.sparse(numFeatures, features.toSeq))
       } else {
         throw new Exception(s"Malformed record $record has ${bag.size} bags, ${labels.size} labels and ${features.size} features")
       }

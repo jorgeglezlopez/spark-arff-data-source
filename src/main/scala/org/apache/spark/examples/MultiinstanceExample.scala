@@ -17,7 +17,7 @@ object MultiinstanceExample {
 
     val log = Logger.getLogger(getClass.getName)
 
-    val sparkSession = SparkSession.builder
+    val sparkSession = SparkSession.builder()
       .appName("MultiinstanceExample")
       .master("local[*]")
       .getOrCreate()

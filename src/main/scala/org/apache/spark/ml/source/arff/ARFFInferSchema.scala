@@ -211,7 +211,7 @@ private[arff] object ARFFInferSchema {
           }
         })
 
-        val labelIndices = labelHeader.map(_._2.toInt)
+        val labelIndices: Array[Int] = labelHeader.map(_._2.toInt)
 
         val labelGroup = new ExtendedAttributeGroup("label", labelIndices, attLabels.toArray, ext_attLabels.toArray)
 
@@ -220,7 +220,9 @@ private[arff] object ARFFInferSchema {
           .toMetadata))
 
         remainingHeader = remainingHeader.filter({ case (_, index) =>
-          !labelIndices.contains(index)
+          if (index > Integer.MAX_VALUE) {
+            throw new Exception("Index to big for laber. This code needs to be removed")
+          } else !labelIndices.contains(index.toInt)
         })
 
       }
@@ -270,7 +272,7 @@ private[arff] object ARFFInferSchema {
     val xmlLabels = sparkSession.sparkContext.textFile(labelsFile)
       .filter(line => !line.isEmpty || line.contains("<!--"))
       .map(_.trim)
-      .collect
+      .collect()
       .mkString("").split("\\?>")(1)
 
     // Transform to elements to find all the tags with label and the names

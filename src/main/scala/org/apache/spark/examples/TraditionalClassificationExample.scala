@@ -7,7 +7,7 @@ import org.apache.spark.ml.linalg.Vector
 
 object TraditionalClassificationExample {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
 
     val traditionalClassificationDataset = getClass
       .getClassLoader
@@ -20,7 +20,7 @@ object TraditionalClassificationExample {
 
     val log = Logger.getLogger(getClass.getName)
 
-    val sparkSession = SparkSession.builder
+    val sparkSession = SparkSession.builder()
       .appName("TraditionalClassificationExample")
       .master("local[*]")
       .getOrCreate()
